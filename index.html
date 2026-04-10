@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Womenopedia 🤯</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+body {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(270deg, #ff9a9e, #fad0c4, #fad0c4);
+    background-size: 600% 600%;
+    animation: bg 10s ease infinite;
+}
+
+@keyframes bg {
+    0% {background-position: 0%}
+    50% {background-position: 100%}
+    100% {background-position: 0%}
+}
+
+.box {
+    background: rgba(255,255,255,0.2);
+    backdrop-filter: blur(15px);
+    padding: 25px;
+    border-radius: 20px;
+    width: 420px;
+    text-align: center;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    animation: fade 1s ease;
+}
+
+@keyframes fade {
+    from {opacity:0; transform: translateY(20px);}
+    to {opacity:1; transform: translateY(0);}
+}
+
+h1 {
+    margin-bottom: 10px;
+}
+
+button {
+    padding: 10px;
+    border: none;
+    border-radius: 10px;
+    background: #ff6f61;
+    color: white;
+    margin-top: 10px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button:hover {
+    transform: scale(1.1);
+    background: #ff3b2e;
+}
+
+select {
+    padding: 8px;
+    margin-top: 10px;
+    border-radius: 8px;
+}
+
+#result, #reaction {
+    margin-top: 15px;
+    font-weight: bold;
+}
+
+#reaction {
+    color: red;
+}
+
+/* Shake */
+.shake {
+    animation: shake 0.4s;
+}
+@keyframes shake {
+    0% {transform: translateX(0);}
+    25% {transform: translateX(-5px);}
+    50% {transform: translateX(5px);}
+    75% {transform: translateX(-5px);}
+    100% {transform: translateX(0);}
+}
+
+/* Glow */
+.glow {
+    text-shadow: 0 0 10px red, 0 0 20px red;
+}
+
+progress {
+    width: 100%;
+    height: 12px;
+    margin-top: 5px;
+}
+
+#status {
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="box">
+
+<h1>🤯 Womenopedia</h1>
+<p><i>Miscommunication Simulator™</i></p>
+
+<select id="scenario" onchange="loadScenario()">
+    <option value="">-- Choose Scenario --</option>
+    <option value="leave">"You can leave"</option>
+    <option value="fine">"I'm fine"</option>
+    <option value="nothing">"Nothing"</option>
+    <option value="whatever">"Do whatever you want"</option>
+    <option value="ok">"Okay"</option>
+</select>
+
+<div id="questionBox"></div>
+
+<div id="result"></div>
+<div id="reaction"></div>
+
+<div style="margin-top:20px;">
+    <p>📉 Understanding Level:</p>
+    <progress id="understanding" value="100" max="100"></progress>
+</div>
+
+<div>
+    <p>💔 Emotional Damage:</p>
+    <progress id="damage" value="0" max="100"></progress>
+</div>
+
+<div id="status"></div>
+
+</div>
+
+<script>
+
+let understanding = 100;
+let damage = 0;
+
+const data = {
+    leave: {
+        text: '"You can leave"',
+        options: ["Leave", "Stay", "Ask 'Are you sure?'"],
+        reactions: [
+            "She expected you to stay 💀",
+            "Why are you still here ⚠️",
+            "Situation escalated 🔥"
+        ]
+    },
+    fine: {
+        text: '"I\'m fine"',
+        options: ["Say okay", "Ask what's wrong", "Ignore"],
+        reactions: [
+            "You believed 'fine'? 💀",
+            "Everything is wrong ⚠️",
+            "Damage increased 🔥"
+        ]
+    },
+    nothing: {
+        text: '"Nothing"',
+        options: ["Accept", "Ask again", "Panic"],
+        reactions: [
+            "Big mistake 💀",
+            "Danger rising ⚠️",
+            "Panic accepted 😂"
+        ]
+    },
+    whatever: {
+        text: '"Do whatever you want"',
+        options: ["Do something", "Do nothing", "Ask again"],
+        reactions: [
+            "Wrong choice 💀",
+            "Also wrong 💀",
+            "Critical error 🔥"
+        ]
+    },
+    ok: {
+        text: '"Okay"',
+        options: ["Be happy", "Ask if upset", "Ignore"],
+        reactions: [
+            "Not a happy okay 💀",
+            "She says fine. She’s not ⚠️",
+            "Self destruction 🔥"
+        ]
+    }
+};
+
+function loadScenario() {
+    let value = document.getElementById("scenario").value;
+    let box = document.getElementById("questionBox");
+
+    if (!value) {
+        box.innerHTML = "";
+        return;
+    }
+
+    let scenario = data[value];
+
+    let html = `<p><b>Girl says: ${scenario.text}</b></p>`;
+    html += `<select id="choice">`;
+
+    scenario.options.forEach((opt, i) => {
+        html += `<option value="${i}">${opt}</option>`;
+    });
+
+    html += `</select><br>`;
+    html += `<button onclick="getReaction('${value}')">See Reaction</button>`;
+
+    box.innerHTML = html;
+}
+
+function getReaction(type) {
+    let choice = document.getElementById("choice").value;
+    let result = document.getElementById("result");
+    let reaction = document.getElementById("reaction");
+
+    result.innerText = "You chose option " + (parseInt(choice)+1);
+
+    let extra = [
+        "No correct answer 💀",
+        "System confused 🤯",
+        "Try again ⚠️",
+        "Logic not found 😂"
+    ];
+
+    reaction.innerText =
+        data[type].reactions[choice] + " | " +
+        extra[Math.floor(Math.random() * extra.length)];
+
+    animateReaction();
+    updateMeters();
+}
+
+function animateReaction() {
+    let reaction = document.getElementById("reaction");
+    reaction.classList.remove("shake", "glow");
+    void reaction.offsetWidth;
+    reaction.classList.add("shake", "glow");
+}
+
+function updateMeters() {
+    let u = document.getElementById("understanding");
+    let d = document.getElementById("damage");
+    let status = document.getElementById("status");
+
+    let loss = Math.floor(Math.random() * 25) + 10;
+    let gain = Math.floor(Math.random() * 20) + 10;
+
+    understanding -= loss;
+    damage += gain;
+
+    if (understanding < 0) understanding = 0;
+    if (damage > 100) damage = 100;
+
+    u.value = understanding;
+    d.value = damage;
+
+    if (understanding > 70) {
+        status.innerText = "Status: Stable 🙂";
+    } else if (understanding > 40) {
+        status.innerText = "Status: Confused 😐";
+    } else if (understanding > 10) {
+        status.innerText = "Status: Critical ⚠️";
+    } else {
+        status.innerText = "Status: 💀 DOOMED";
+        triggerDoom();
+    }
+}
+
+function triggerDoom() {
+    document.body.style.background = "red";
+
+    setTimeout(() => {
+        document.body.style.background = "";
+    }, 200);
+
+    document.getElementById("reaction").innerText += " | SYSTEM FAILURE 💀";
+}
+
+</script>
+
+</body>
+</html>
